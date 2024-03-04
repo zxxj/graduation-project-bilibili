@@ -44,12 +44,15 @@
       <Menu />
     </div>
 
-    <div class="content banner">content</div>
+    <div class="content banner">
+      <Content />
+    </div>
   </div>
 </template>
 
 <script setup>
 import Menu from '../components/HomeMenu.vue'
+import Content from '../components/HomeContent.vue'
 </script>
 
 <style lang="scss" scoped>

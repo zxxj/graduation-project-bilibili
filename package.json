@@ -11,6 +11,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
+    "ant-design-vue": "4.x",
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.7",
     "sass": "^1.71.1",
