@@ -125,6 +125,39 @@
       </div>
       <div class="right">
         <div class="item" v-for="item in videoList" :key="item">
+          <a :href="item.link">
+            <div class="top">
+              <img :src="item.src" alt="" />
+
+              <div class="desc">
+                <div class="desc-left">
+                  <div class="count">
+                    <img src="../assets/images/content/视频.png" alt="" />
+                    <div class="text">{{ item.count }}万</div>
+                  </div>
+                  <div class="pcount">
+                    <img src="../assets/images/content/评论.png" alt="" />
+                    <div class="text">{{ item.pcount }}</div>
+                  </div>
+                </div>
+                <div class="time">{{ item.time }}</div>
+              </div>
+            </div>
+          </a>
+          <div class="bottom">
+            <div class="title">{{ item.title }}</div>
+            <div class="author-box">
+              <img src="../assets/images/content/UP主.png" alt="" />
+              <div class="author">{{ item.author }}</div>
+              <div class="day">{{ item.day }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <div class="item" v-for="item in videoBottomList" :key="item">
+        <a :href="item.link">
           <div class="top">
             <img :src="item.src" alt="" />
 
@@ -149,37 +182,8 @@
               <div class="author">{{ item.author }}</div>
               <div class="day">{{ item.day }}</div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom">
-      <div class="item" v-for="item in videoBottomList" :key="item">
-        <div class="top">
-          <img :src="item.src" alt="" />
-
-          <div class="desc">
-            <div class="desc-left">
-              <div class="count">
-                <img src="../assets/images/content/视频.png" alt="" />
-                <div class="text">{{ item.count }}万</div>
-              </div>
-              <div class="pcount">
-                <img src="../assets/images/content/评论.png" alt="" />
-                <div class="text">{{ item.pcount }}</div>
-              </div>
-            </div>
-            <div class="time">{{ item.time }}</div>
-          </div>
-        </div>
-        <div class="bottom">
-          <div class="title">{{ item.title }}</div>
-          <div class="author-box">
-            <img src="../assets/images/content/UP主.png" alt="" />
-            <div class="author">{{ item.author }}</div>
-            <div class="day">{{ item.day }}</div>
-          </div>
-        </div>
+          </div></a
+        >
       </div>
     </div>
   </div>
@@ -202,7 +206,8 @@ const videoList = [
     time: '15:32',
     title: '前端技术的十八年风雨（2006-2024）',
     author: '织点代码',
-    day: '昨天'
+    day: '昨天',
+    link: 'https://www.bilibili.com/video/BV1eC411p73m/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -212,7 +217,8 @@ const videoList = [
     time: '02:28',
     title: '推荐几种网站部署方案',
     author: '狂奔滴小馬',
-    day: '2-25'
+    day: '2-25',
+    link: 'https://www.bilibili.com/video/BV1Mt42187SY/?spm_id_from=333.1007.tianma.1-1-1.click'
   },
 
   {
@@ -222,7 +228,8 @@ const videoList = [
     time: '04:17',
     title: '【大虾沉浸式试车】7.98万！比亚迪驱逐舰05荣耀版',
     author: '大虾试车真香',
-    day: '2-20'
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Fz421o7Gr/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -232,7 +239,8 @@ const videoList = [
     time: '3:23',
     title: '安和桥一响，你也会遗憾吗？',
     author: '九三的耳朵不是特别好',
-    day: '2-20'
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Ej421Q7wj/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -242,7 +250,8 @@ const videoList = [
     time: '15:32',
     title: '小米 14 Ultra 评测',
     author: '钟文泽',
-    day: '2-23'
+    day: '2-23',
+    link: 'https://www.bilibili.com/video/BV1hj421D79n/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -252,7 +261,8 @@ const videoList = [
     time: '08:40',
     title: '小不同，大进化！全新极氪001',
     author: '大米评测',
-    day: '2-27'
+    day: '2-27',
+    link: 'https://bilibili.com/video/BV1rr421p7Lv/?spm_id_from=333.337.search-card.all.click'
   }
 ]
 
@@ -264,7 +274,8 @@ const videoBottomList = [
     time: '15:32',
     title: '前端技术的十八年风雨（2006-2024）',
     author: '织点代码',
-    day: '昨天'
+    day: '昨天',
+    link: 'https://www.bilibili.com/video/BV1eC411p73m/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -274,7 +285,8 @@ const videoBottomList = [
     time: '02:28',
     title: '推荐几种网站部署方案',
     author: '狂奔滴小馬',
-    day: '2-25'
+    day: '2-25',
+    link: 'https://www.bilibili.com/video/BV1Mt42187SY/?spm_id_from=333.1007.tianma.1-1-1.click'
   },
 
   {
@@ -284,7 +296,8 @@ const videoBottomList = [
     time: '04:17',
     title: '【大虾沉浸式试车】7.98万！比亚迪驱逐舰05荣耀版',
     author: '大虾试车真香',
-    day: '2-20'
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Fz421o7Gr/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -294,7 +307,8 @@ const videoBottomList = [
     time: '3:23',
     title: '安和桥一响，你也会遗憾吗？',
     author: '九三的耳朵不是特别好',
-    day: '2-20'
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Ej421Q7wj/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -304,7 +318,8 @@ const videoBottomList = [
     time: '15:32',
     title: '小米 14 Ultra 评测',
     author: '钟文泽',
-    day: '2-23'
+    day: '2-23',
+    link: 'https://www.bilibili.com/video/BV1hj421D79n/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -314,9 +329,9 @@ const videoBottomList = [
     time: '08:40',
     title: '小不同，大进化！全新极氪001',
     author: '大米评测',
-    day: '2-27'
+    day: '2-27',
+    link: 'https://bilibili.com/video/BV1rr421p7Lv/?spm_id_from=333.337.search-card.all.click'
   },
-
   {
     src: v1,
     count: 2.7,
@@ -324,7 +339,8 @@ const videoBottomList = [
     time: '15:32',
     title: '前端技术的十八年风雨（2006-2024）',
     author: '织点代码',
-    day: '昨天'
+    day: '昨天',
+    link: 'https://www.bilibili.com/video/BV1eC411p73m/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -334,7 +350,8 @@ const videoBottomList = [
     time: '02:28',
     title: '推荐几种网站部署方案',
     author: '狂奔滴小馬',
-    day: '2-25'
+    day: '2-25',
+    link: 'https://www.bilibili.com/video/BV1Mt42187SY/?spm_id_from=333.1007.tianma.1-1-1.click'
   },
 
   {
@@ -344,7 +361,41 @@ const videoBottomList = [
     time: '04:17',
     title: '【大虾沉浸式试车】7.98万！比亚迪驱逐舰05荣耀版',
     author: '大虾试车真香',
-    day: '2-20'
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Fz421o7Gr/?spm_id_from=333.337.search-card.all.click'
+  },
+
+  {
+    src: v4,
+    count: 105.3,
+    pcount: 780,
+    time: '3:23',
+    title: '安和桥一响，你也会遗憾吗？',
+    author: '九三的耳朵不是特别好',
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Ej421Q7wj/?spm_id_from=333.337.search-card.all.click'
+  },
+
+  {
+    src: v5,
+    count: 47.9,
+    pcount: 4265,
+    time: '15:32',
+    title: '小米 14 Ultra 评测',
+    author: '钟文泽',
+    day: '2-23',
+    link: 'https://www.bilibili.com/video/BV1hj421D79n/?spm_id_from=333.337.search-card.all.click'
+  },
+
+  {
+    src: v6,
+    count: 27.5,
+    pcount: 936,
+    time: '08:40',
+    title: '小不同，大进化！全新极氪001',
+    author: '大米评测',
+    day: '2-27',
+    link: 'https://bilibili.com/video/BV1rr421p7Lv/?spm_id_from=333.337.search-card.all.click'
   },
   {
     src: v1,
@@ -353,7 +404,8 @@ const videoBottomList = [
     time: '15:32',
     title: '前端技术的十八年风雨（2006-2024）',
     author: '织点代码',
-    day: '昨天'
+    day: '昨天',
+    link: 'https://www.bilibili.com/video/BV1eC411p73m/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -363,7 +415,8 @@ const videoBottomList = [
     time: '02:28',
     title: '推荐几种网站部署方案',
     author: '狂奔滴小馬',
-    day: '2-25'
+    day: '2-25',
+    link: 'https://www.bilibili.com/video/BV1Mt42187SY/?spm_id_from=333.1007.tianma.1-1-1.click'
   },
 
   {
@@ -373,7 +426,41 @@ const videoBottomList = [
     time: '04:17',
     title: '【大虾沉浸式试车】7.98万！比亚迪驱逐舰05荣耀版',
     author: '大虾试车真香',
-    day: '2-20'
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Fz421o7Gr/?spm_id_from=333.337.search-card.all.click'
+  },
+
+  {
+    src: v4,
+    count: 105.3,
+    pcount: 780,
+    time: '3:23',
+    title: '安和桥一响，你也会遗憾吗？',
+    author: '九三的耳朵不是特别好',
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Ej421Q7wj/?spm_id_from=333.337.search-card.all.click'
+  },
+
+  {
+    src: v5,
+    count: 47.9,
+    pcount: 4265,
+    time: '15:32',
+    title: '小米 14 Ultra 评测',
+    author: '钟文泽',
+    day: '2-23',
+    link: 'https://www.bilibili.com/video/BV1hj421D79n/?spm_id_from=333.337.search-card.all.click'
+  },
+
+  {
+    src: v6,
+    count: 27.5,
+    pcount: 936,
+    time: '08:40',
+    title: '小不同，大进化！全新极氪001',
+    author: '大米评测',
+    day: '2-27',
+    link: 'https://bilibili.com/video/BV1rr421p7Lv/?spm_id_from=333.337.search-card.all.click'
   },
   {
     src: v1,
@@ -382,7 +469,8 @@ const videoBottomList = [
     time: '15:32',
     title: '前端技术的十八年风雨（2006-2024）',
     author: '织点代码',
-    day: '昨天'
+    day: '昨天',
+    link: 'https://www.bilibili.com/video/BV1eC411p73m/?spm_id_from=333.337.search-card.all.click'
   },
 
   {
@@ -392,16 +480,62 @@ const videoBottomList = [
     time: '02:28',
     title: '推荐几种网站部署方案',
     author: '狂奔滴小馬',
-    day: '2-25'
+    day: '2-25',
+    link: 'https://www.bilibili.com/video/BV1Mt42187SY/?spm_id_from=333.1007.tianma.1-1-1.click'
+  },
+
+  {
+    src: v3,
+    count: 119.2,
+    pcount: 2678,
+    time: '04:17',
+    title: '【大虾沉浸式试车】7.98万！比亚迪驱逐舰05荣耀版',
+    author: '大虾试车真香',
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Fz421o7Gr/?spm_id_from=333.337.search-card.all.click'
+  },
+
+  {
+    src: v4,
+    count: 105.3,
+    pcount: 780,
+    time: '3:23',
+    title: '安和桥一响，你也会遗憾吗？',
+    author: '九三的耳朵不是特别好',
+    day: '2-20',
+    link: 'https://www.bilibili.com/video/BV1Ej421Q7wj/?spm_id_from=333.337.search-card.all.click'
+  },
+
+  {
+    src: v5,
+    count: 47.9,
+    pcount: 4265,
+    time: '15:32',
+    title: '小米 14 Ultra 评测',
+    author: '钟文泽',
+    day: '2-23',
+    link: 'https://www.bilibili.com/video/BV1hj421D79n/?spm_id_from=333.337.search-card.all.click'
+  },
+
+  {
+    src: v6,
+    count: 27.5,
+    pcount: 936,
+    time: '08:40',
+    title: '小不同，大进化！全新极氪001',
+    author: '大米评测',
+    day: '2-27',
+    link: 'https://bilibili.com/video/BV1rr421p7Lv/?spm_id_from=333.337.search-card.all.click'
   },
   {
-    src: v2,
-    count: 2.1,
-    pcount: 100,
-    time: '02:28',
-    title: '推荐几种网站部署方案',
-    author: '狂奔滴小馬',
-    day: '2-25'
+    src: v5,
+    count: 47.9,
+    pcount: 4265,
+    time: '15:32',
+    title: '小米 14 Ultra 评测',
+    author: '钟文泽',
+    day: '2-23',
+    link: 'https://www.bilibili.com/video/BV1hj421D79n/?spm_id_from=333.337.search-card.all.click'
   }
 ]
 const onChange = (current) => {
@@ -422,7 +556,14 @@ const onChange = (current) => {
     .left {
       width: 650px;
       height: 450px;
-      background-color: #7d1612;
+      // background-color: #d63025;
+      background: #c9ccd3;
+      background-image: linear-gradient(
+        -180deg,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(0, 0, 0, 0.5) 100%
+      );
+      background-image: linear-gradient(to right, #434343 0%, black 100%);
       border-radius: 10px;
 
       .item {
@@ -549,6 +690,10 @@ const onChange = (current) => {
   }
 
   .bottom {
+    a {
+      color: #9499ad;
+      text-decoration: none;
+    }
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -607,6 +752,7 @@ const onChange = (current) => {
 
         .title {
           font-weight: bold;
+          color: #000;
         }
         .author-box {
           display: flex;

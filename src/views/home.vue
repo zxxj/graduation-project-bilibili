@@ -1,44 +1,6 @@
 <template>
   <div class="home-container">
-    <div class="header">
-      <div class="left"></div>
-      <div class="right">
-        <div class="item">
-          <div class="icon">
-            <img src="../assets/images/home/心情.png" alt="" />
-          </div>
-          <div class="text">心情记录</div>
-        </div>
-
-        <div class="item">
-          <div class="icon">
-            <img src="../assets/images/home/自我评价.png" alt="" />
-          </div>
-          <div class="text">自我探知</div>
-        </div>
-
-        <div class="item">
-          <div class="icon">
-            <img src="../assets/images/home/问卷调查.png" alt="" />
-          </div>
-          <div class="text">问卷调查</div>
-        </div>
-
-        <div class="item">
-          <div class="icon">
-            <img src="../assets/images/home/信件.png" alt="" />
-          </div>
-          <div class="text">信件</div>
-        </div>
-
-        <div class="item">
-          <div class="icon">
-            <img src="../assets/images/home/登录.png" alt="" />
-          </div>
-          <div class="text">登录</div>
-        </div>
-      </div>
-    </div>
+    <Header />
 
     <div class="menu banner">
       <Menu />
@@ -51,6 +13,7 @@
 </template>
 
 <script setup>
+import Header from './Header.vue'
 import Menu from '../components/HomeMenu.vue'
 import Content from '../components/HomeContent.vue'
 </script>
