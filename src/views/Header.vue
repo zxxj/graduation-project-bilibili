@@ -65,6 +65,9 @@ const handleMenu = (index) => {
     case 2:
       router.push('/self')
       break
+    case 3:
+      router.push('/question')
+      break
   }
 }
 </script>
