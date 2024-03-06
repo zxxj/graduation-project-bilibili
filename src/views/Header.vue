@@ -62,7 +62,9 @@ const handleMenu = (index) => {
     case 1:
       router.push('/mood')
       break
-    // case 2:
+    case 2:
+      router.push('/self')
+      break
   }
 }
 </script>

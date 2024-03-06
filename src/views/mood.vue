@@ -180,8 +180,4 @@ const columns = ref([
     margin-top: 40px;
   }
 }
-
-:deep(.ant-btn-primary) {
-  background-color: slateblue;
-}
 </style>
