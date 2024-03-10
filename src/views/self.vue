@@ -15,63 +15,60 @@
             >
               <a-form-item
                 label="1.你认为自己的核心价值观是什么？这些价值观如何影响你的日常生活和决策？"
-                name="username"
+                name="content1"
                 style="display: block"
               >
-                <a-textarea v-model:value="formState.username" />
+                <a-textarea v-model:value="formState.content1" />
               </a-form-item>
 
               <a-form-item
                 label="2.你最自豪的成就是什么？为什么这些成就对你如此重要？"
-                name="username"
+                name="content2"
                 style="display: block"
               >
-                <a-textarea v-model:value="formState.username" />
+                <a-textarea v-model:value="formState.content2" />
               </a-form-item>
 
               <a-form-item
                 label="3.你是如何处理挫折和困难的？你的应对策略是什么？"
-                name="username"
+                name="content3"
                 style="display: block"
               >
-                <a-textarea v-model:value="formState.username" />
+                <a-textarea v-model:value="formState.content3" />
               </a-form-item>
 
               <a-form-item
                 label="4.在你的人际关系中，你通常扮演什么角色？你喜欢这个角色吗？"
-                name="username"
+                name="content4"
                 style="display: block"
               >
-                <a-textarea v-model:value="formState.username" />
+                <a-textarea v-model:value="formState.content4" />
               </a-form-item>
 
               <a-form-item
-                label="5.你是如何描述自己的性格的？你认为自己的优点和缺点是什么？"
-                name="username"
+                label="5.你在未来五年内的职业和个人目标是什么？你计划如何实现这些目标？"
+                name="content5"
                 style="display: block"
               >
-                <a-textarea v-model:value="formState.username" />
-              </a-form-item>
-
-              <a-form-item
-                label="6.你在未来五年内的职业和个人目标是什么？你计划如何实现这些目标？"
-                name="username"
-                style="display: block"
-              >
-                <a-textarea v-model:value="formState.username" />
+                <a-textarea v-model:value="formState.content5" />
               </a-form-item>
 
               <a-form-item>
                 <a-space style="width: 100%; justify-content: center">
-                  <a-button>重置</a-button>
-                  <a-button type="primary" html-type="submit">提交</a-button>
+                  <a-button @click="resetClick">重置</a-button>
+                  <a-button type="primary" html-type="submit" @click="handleSubmit">提交</a-button>
                 </a-space>
               </a-form-item>
             </a-form>
           </a-card>
         </a-tab-pane>
         <a-tab-pane key="3" tab="历史记录">
-          <a-table :dataSource="dataSource" :columns="columns" />
+          <a-table
+            :dataSource="dataSource"
+            :columns="columns"
+            :pagination="pagination"
+            @change="handlePageParams"
+          />
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -80,12 +77,26 @@
 
 <script setup>
 import Header from './Header.vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
+import { listSelf, addSelf } from '../http/user'
+import { message } from 'ant-design-vue'
 
-const formState = reactive({
-  username: '',
-  password: '',
-  remember: true
+onMounted(() => {
+  listSelfData()
+})
+
+const pagination = ref({
+  pageSize: 10,
+  pageNumber: 1,
+  total: 0
+})
+
+const formState = ref({
+  content1: '',
+  content2: '',
+  content3: '',
+  content4: '',
+  content5: ''
 })
 const onFinish = (values) => {
   console.log('Success:', values)
@@ -112,22 +123,82 @@ const dataSource = ref([
 
 const columns = ref([
   {
-    title: '心情状态',
-    dataIndex: 'status',
-    key: 'status'
+    title: '你认为自己的核心价值观是什么？这些价值观如何影响你的日常生活和决策？',
+    dataIndex: 'content1',
+    key: 'content1'
   },
   {
-    title: '心情描述',
-    dataIndex: 'desc',
-    key: 'desc',
-    width: '70%'
+    title: '你最自豪的成就是什么？为什么这些成就对你如此重要？',
+    dataIndex: 'content2',
+    key: 'content2'
   },
   {
-    title: '记录时间',
-    dataIndex: 'time',
-    key: 'time'
+    title: '你是如何处理挫折和困难的？你的应对策略是什么？',
+    dataIndex: 'content3',
+    key: 'content3'
+  },
+  {
+    title: '在你的人际关系中，你通常扮演什么角色？你喜欢这个角色吗？',
+    dataIndex: 'content4',
+    key: 'content4'
+  },
+  {
+    title: '你在未来五年内的职业和个人目标是什么？你计划如何实现这些目标？',
+    dataIndex: 'content5',
+    key: 'content5'
   }
 ])
+
+const listSelfData = async () => {
+  const userId = localStorage.getItem('userId')
+  const body = {
+    ...pagination.value,
+    userId: userId
+  }
+  const res = await listSelf(body)
+  if (res && res.data.body.dataList) {
+    dataSource.value = res.data.body.dataList
+    pagination.value.total = res.data.body.allTotal
+  } else {
+    message.error('自我探知列表获取失败')
+  }
+}
+
+const resetClick = () => {
+  formState.value = {
+    content1: '',
+    content2: '',
+    content3: '',
+    content4: '',
+    content5: ''
+  }
+}
+const handleSubmit = async () => {
+  const body = {
+    ...formState.value,
+    userId: Number(localStorage.getItem('userId'))
+  }
+  const res = await addSelf(body)
+  if (res && res.data.reCode == '200') {
+    message.success('添加成功!!')
+    listSelfData()
+    formState.value = {
+      content1: '',
+      content2: '',
+      content3: '',
+      content4: '',
+      content5: ''
+    }
+  } else {
+    message.error('添加失败!!')
+  }
+}
+
+const handlePageParams = (page, pageSize) => {
+  console.log(page, pageSize)
+  pagination.value.pageNumber = page.current
+  listSelfData()
+}
 </script>
 
 <style lang="scss" scoped>

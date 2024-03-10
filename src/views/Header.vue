@@ -110,7 +110,7 @@ const handleMenu = (index) => {
       router.push('/question')
       break
     case 5:
-      router.push('/userinfo')
+      router.push('/info')
       break
   }
 }

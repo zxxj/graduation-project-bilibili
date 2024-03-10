@@ -22,14 +22,28 @@
                 </a-input>
               </a-form-item>
 
-              <a-form-item label="密码" name="password">
-                <a-input-password v-model:value="formState.password">
-                  <template #prefix>
-                    <LockOutlined class="site-form-item-icon" />
-                  </template>
-                </a-input-password>
+              <a-form-item label="年龄" name="age">
+                <a-input v-model:value="formState.age"> </a-input>
+              </a-form-item>
+
+              <a-form-item label="性别" name="gender">
+                <a-input v-model:value="formState.gender"> </a-input>
+              </a-form-item>
+
+              <a-form-item label="邮箱" name="email">
+                <a-input v-model:value="formState.email"> </a-input>
+              </a-form-item>
+
+              <a-form-item label="手机号" name="phone">
+                <a-input v-model:value="formState.phone"> </a-input>
+              </a-form-item>
+
+              <a-form-item label="用户类型" name="flag">
+                <a-input v-model:value="formState.flag"> </a-input>
               </a-form-item>
             </a-form>
+
+            <a-button danger @click="logout">退出登录</a-button>
           </a-card>
         </a-tab-pane>
         <a-tab-pane key="2" tab="修改用户信息" force-render>
@@ -42,11 +56,7 @@
               @finish="onFinish"
               @finishFailed="onFinishFailed"
             >
-              <a-form-item
-                label="用户名"
-                name="username"
-                :rules="[{ required: true, message: 'Please input your username!' }]"
-              >
+              <a-form-item label="用户名" name="username">
                 <a-input v-model:value="formState.username">
                   <template #prefix>
                     <UserOutlined class="site-form-item-icon" />
@@ -54,35 +64,31 @@
                 </a-input>
               </a-form-item>
 
-              <a-form-item
-                label="密码"
-                name="password"
-                :rules="[{ required: true, message: 'Please input your password!' }]"
-              >
-                <a-input-password v-model:value="formState.password">
-                  <template #prefix>
-                    <LockOutlined class="site-form-item-icon" />
-                  </template>
-                </a-input-password>
+              <a-form-item label="年龄" name="age">
+                <a-input v-model:value="formState.age"> </a-input>
               </a-form-item>
-              <a-form-item
-                label="确认密码"
-                name="repassword"
-                :rules="[{ required: true, message: 'Please input your repassword!' }]"
-              >
-                <a-input-password v-model:value="formState.password">
-                  <template #prefix>
-                    <LockOutlined class="site-form-item-icon" />
-                  </template>
-                </a-input-password>
+
+              <a-form-item label="性别" name="gender">
+                <a-select v-model:value="formState.gender">
+                  <a-select-option value="1">男</a-select-option>
+                  <a-select-option value="0">女</a-select-option>
+                </a-select>
               </a-form-item>
+
+              <a-form-item label="邮箱" name="email">
+                <a-input v-model:value="formState.email"> </a-input>
+              </a-form-item>
+
+              <a-form-item label="手机号" name="phone">
+                <a-input v-model:value="formState.phone"> </a-input>
+              </a-form-item>
+
+              <a-form-item label="用户类型" name="flag">
+                <a-input v-model:value="formState.flag"> </a-input>
+              </a-form-item>
+
               <a-form-item>
-                <a-button
-                  :disabled="disabled"
-                  type="primary"
-                  html-type="submit"
-                  class="login-form-button"
-                >
+                <a-button type="primary" html-type="submit" class="login-form-button">
                   确认修改
                 </a-button>
               </a-form-item>
@@ -92,30 +98,79 @@
       </a-tabs>
     </div>
   </div>
+
+  <a-modal v-model:open="open" title="退出登录" @ok="handleOk" okText="确定" cancelText="取消">
+    您确定要退出登录吗?
+  </a-modal>
 </template>
 
 <script setup>
 import Header from './Header.vue'
 import { LockFilled, LockOutlined, UserOutlined } from '@ant-design/icons-vue'
 
-import { reactive, computed, ref } from 'vue'
+import { reactive, computed, ref, onMounted } from 'vue'
+import { listUserInfo, updateUser } from '../http/user'
+import { uploadListProps } from 'ant-design-vue/es/upload/interface'
+import router from '@/router'
+import { message } from 'ant-design-vue'
+
+onMounted(async () => {
+  const res = await listUserInfo({
+    id: localStorage.getItem('userId'),
+    username: localStorage.getItem('username')
+  })
+  if (res && res.data.body.dataList) {
+    const userInfo = res.data.body.dataList[0]
+    userInfo.gender = userInfo.gender === 1 ? '男' : '女'
+    formState.value = userInfo
+  }
+})
+const open = ref(false)
+const logout = () => {
+  open.value = true
+}
+
+const handleOk = () => {
+  localStorage.clear('userId')
+  localStorage.clear('username')
+  router.push('/login')
+}
 
 const activeKey = ref('1')
 
-const formState = reactive({
+const formState = ref({
   username: '',
   password: '',
   remember: true
 })
-const onFinish = (values) => {
-  console.log('Success:', values)
+const onFinish = async (values) => {
+  values.id = localStorage.getItem('userId')
+  values.gender = values.gender === '男' ? 1 : 0
+  values.age = Number(values.age)
+  values.phone = Number(values.phone)
+  values.flag = Number(values.flag)
+  const res = await updateUser(values)
+
+  if (res && res.data.reCode == '200') {
+    message.success('修改成功,即将重新登录!!')
+    setTimeout(() => {
+      router.push('/login')
+    }, 2000)
+  }
+
+  const info = await listUserInfo({
+    id: localStorage.getItem('userId'),
+    username: localStorage.getItem('username')
+  })
+  if (info && info.data.body.dataList) {
+    const userInfo = res.data.body.dataList[0]
+    userInfo.gender = userInfo.gender === 1 ? '男' : '女'
+    formState.value = userInfo
+  }
 }
 const onFinishFailed = (errorInfo) => {
   console.log('Failed:', errorInfo)
 }
-const disabled = computed(() => {
-  return !(formState.username && formState.password)
-})
 </script>
 
 <style lang="scss" scoped>

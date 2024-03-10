@@ -44,7 +44,7 @@
               html-type="submit"
               class="login-form-button"
               style="width: 60%; margin-left: 90px"
-              @click="() => router.push('/home')"
+              @click="loginClick"
             >
               登录
             </a-button>
@@ -62,6 +62,8 @@
 import { LockFilled, LockOutlined, UserOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
 import { reactive, computed } from 'vue'
+import { login } from '../http/user'
+import { message } from 'ant-design-vue'
 
 const router = useRouter()
 const formState = reactive({
@@ -78,6 +80,19 @@ const onFinishFailed = (errorInfo) => {
 const disabled = computed(() => {
   return !(formState.username && formState.password)
 })
+
+const loginClick = async () => {
+  const res = await login(formState)
+
+  if (res && res.data.reCode == '200') {
+    localStorage.setItem('username', res.data.body.userName)
+    localStorage.setItem('userId', res.data.body.userId)
+
+    router.push('/home')
+  } else {
+    message.error('登录失败,请重试')
+  }
+}
 </script>
 
 <style lang="scss" scoped>

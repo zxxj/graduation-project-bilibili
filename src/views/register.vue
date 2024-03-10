@@ -37,16 +37,30 @@
             </a-input-password>
           </a-form-item>
 
-          <a-form-item
-            label="确认密码"
-            name="repassword"
-            :rules="[{ required: true, message: 'Please input your password!' }]"
-          >
-            <a-input-password v-model:value="formState.password">
-              <template #prefix>
-                <LockOutlined class="site-form-item-icon" />
-              </template>
-            </a-input-password>
+          <a-form-item label="年龄" name="age">
+            <a-input v-model:value="formState.age"> </a-input>
+          </a-form-item>
+
+          <a-form-item label="邮箱" name="email">
+            <a-input v-model:value="formState.email"> </a-input>
+          </a-form-item>
+
+          <a-form-item label="性别" name="gender">
+            <a-select v-model:value="formState.gender">
+              <a-select-option value="1">男</a-select-option>
+              <a-select-option value="0">女</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-form-item label="手机号" name="phone">
+            <a-input v-model:value="formState.phone"> </a-input>
+          </a-form-item>
+
+          <a-form-item label="用户类型" name="flag">
+            <a-select v-model:value="formState.flag">
+              <a-select-option value="0">医生</a-select-option>
+              <a-select-option value="1">管理员</a-select-option>
+            </a-select>
           </a-form-item>
 
           <a-form-item>
@@ -74,16 +88,30 @@
 import { LockFilled, LockOutlined, UserOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
 import { reactive, computed } from 'vue'
+import { register } from '../http/user'
+import { message } from 'ant-design-vue'
 
 const router = useRouter()
 
 const formState = reactive({
   username: '',
-  password: '',
-  remember: true
+  password: ''
 })
-const onFinish = (values) => {
-  console.log('Success:', values)
+const onFinish = async (values) => {
+  values.age = Number(values.age)
+  // values.phone = Number(values.phone)
+  values.gender = Number(values.gender)
+  values.flag = Number(values.flag)
+
+  const res = await register(values)
+  console.log(res)
+
+  if (res && res.data.reCode == '200') {
+    message.success('注册成功,即将进入登录页面!!')
+    setTimeout(() => {
+      router.push('/login')
+    }, 2000)
+  }
 }
 const onFinishFailed = (errorInfo) => {
   console.log('Failed:', errorInfo)

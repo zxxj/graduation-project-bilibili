@@ -1,3 +1,4 @@
+import { message } from 'ant-design-vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -24,7 +25,7 @@ const router = createRouter({
       component: () => import('../views/question.vue')
     },
     {
-      path: '/userinfo',
+      path: '/info',
       component: () => import('../views/userInfo.vue')
     },
     {
@@ -36,6 +37,25 @@ const router = createRouter({
       component: () => import('../views/register.vue')
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const userId = localStorage.getItem('userId')
+  if (userId) {
+    if (to.path === '/login' || to.path === '/register') {
+      next('/home')
+      message.warn('退出登录后才能访问登录页与注册页哦!')
+    } else {
+      next()
+    }
+  } else {
+    if (to.path == '/login' || to.path == '/register') {
+      next()
+    } else {
+      next('/login')
+      message.warn('请先登录!')
+    }
+  }
 })
 
 export default router
