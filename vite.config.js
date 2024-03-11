@@ -19,6 +19,10 @@ export default defineConfig({
       '/self-discovery': {
         target: 'http://182.92.3.1:15555',
         changeOrigin: true
+      },
+      '/correspondence': {
+        target: 'http://182.92.3.1:15555',
+        changeOrigin: true
       }
     }
   },

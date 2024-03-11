@@ -16,7 +16,7 @@
           <a-form-item
             label="用户名"
             name="username"
-            :rules="[{ required: true, message: 'Please input your username!' }]"
+            :rules="[{ required: true, message: '请输入用户名!' }]"
           >
             <a-input v-model:value="formState.username">
               <template #prefix>
@@ -28,7 +28,7 @@
           <a-form-item
             label="密码"
             name="password"
-            :rules="[{ required: true, message: 'Please input your password!' }]"
+            :rules="[{ required: true, message: '请输入密码!' }]"
           >
             <a-input-password v-model:value="formState.password">
               <template #prefix>
@@ -58,8 +58,9 @@
 
           <a-form-item label="用户类型" name="flag">
             <a-select v-model:value="formState.flag">
-              <a-select-option value="0">医生</a-select-option>
-              <a-select-option value="1">管理员</a-select-option>
+              <a-select-option value="0">普通用户</a-select-option>
+              <a-select-option value="1">医生</a-select-option>
+              <a-select-option value="2">管理员</a-select-option>
             </a-select>
           </a-form-item>
 

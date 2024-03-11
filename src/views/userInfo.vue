@@ -39,7 +39,11 @@
               </a-form-item>
 
               <a-form-item label="用户类型" name="flag">
-                <a-input v-model:value="formState.flag"> </a-input>
+                <a-select v-model:value="formState.flag">
+                  <a-select-option value="0">普通用户</a-select-option>
+                  <a-select-option value="1">医生</a-select-option>
+                  <a-select-option value="2">管理员</a-select-option>
+                </a-select>
               </a-form-item>
             </a-form>
 
@@ -84,7 +88,11 @@
               </a-form-item>
 
               <a-form-item label="用户类型" name="flag">
-                <a-input v-model:value="formState.flag"> </a-input>
+                <a-select v-model:value="formState.flag">
+                  <a-select-option value="0">普通用户</a-select-option>
+                  <a-select-option value="1">医生</a-select-option>
+                  <a-select-option value="2">管理员</a-select-option>
+                </a-select>
               </a-form-item>
 
               <a-form-item>
@@ -122,6 +130,14 @@ onMounted(async () => {
   if (res && res.data.body.dataList) {
     const userInfo = res.data.body.dataList[0]
     userInfo.gender = userInfo.gender === 1 ? '男' : '女'
+    userInfo.flag =
+      userInfo.flag == 0
+        ? '普通用户'
+        : userInfo.flag == 1
+          ? '医生'
+          : userInfo.flag == 2
+            ? '管理员'
+            : ''
     formState.value = userInfo
   }
 })
@@ -131,17 +147,17 @@ const logout = () => {
 }
 
 const handleOk = () => {
-  localStorage.clear('userId')
-  localStorage.clear('username')
+  localStorage.removeItem('userId')
+  localStorage.removeItem('username')
   router.push('/login')
+  window.location.reload()
 }
 
 const activeKey = ref('1')
 
 const formState = ref({
   username: '',
-  password: '',
-  remember: true
+  password: ''
 })
 const onFinish = async (values) => {
   values.id = localStorage.getItem('userId')
@@ -153,17 +169,20 @@ const onFinish = async (values) => {
 
   if (res && res.data.reCode == '200') {
     message.success('修改成功,即将重新登录!!')
-    setTimeout(() => {
-      router.push('/login')
-    }, 2000)
+    localStorage.removeItem('userId')
+    localStorage.removeItem('username')
+    router.push('/login')
+    window.location.reload()
   }
 
   const info = await listUserInfo({
     id: localStorage.getItem('userId'),
     username: localStorage.getItem('username')
   })
+
   if (info && info.data.body.dataList) {
-    const userInfo = res.data.body.dataList[0]
+    const userInfo = info.data.body.dataList[0]
+    userInfo.flag = userInfo.flag === 1 ? '管理员' : '医生'
     userInfo.gender = userInfo.gender === 1 ? '男' : '女'
     formState.value = userInfo
   }

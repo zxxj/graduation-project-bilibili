@@ -65,7 +65,7 @@
               name="addresseeId"
               :rules="[{ required: true, message: '请选择收件人!' }]"
             >
-              <a-select v-model:value="letterForm.addresseeId" ref="select" style="width: 120px">
+              <a-select v-model:value="letterForm.addresseeId" ref="select" style="width: 150px">
                 <template v-for="item in userList" :key="item">
                   <a-select-option :value="item.id">{{ item.username }}</a-select-option>
                 </template>
@@ -188,6 +188,7 @@ const handleOk = async () => {
       open.value = false
       message.success(res.data.reMsg)
       listSendLetterData()
+      letterForm.value = {}
     })
     .catch((error) => {
       message.success(error.data.reMsg)
