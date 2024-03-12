@@ -91,8 +91,16 @@
           :columns="addresseeColumns"
           style="width: 100%"
         >
-          <template #bodyCell="{ column, text, record }">
-            <template v-if="column.dataIndex === 'operation'">
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'senderId'">
+              {{ listUsername(record.senderId) }}
+            </template>
+
+            <template v-if="column.key === 'addresseeId'">
+              {{ listUsername(record.addresseeId) }}
+            </template>
+
+            <template v-if="column.key === 'operation'">
               <a-popconfirm title="您确定要拒收吗?" @confirm="onDelete(record.id)">
                 <a-button type="primary">拒收信件</a-button>
               </a-popconfirm>
@@ -194,6 +202,17 @@ const handleOk = async () => {
       message.success(error.data.reMsg)
     })
 }
+
+const listUsername = (id) => {
+  const item = userList.value.filter((item) => {
+    if (item.id === id) {
+      return item.username
+    }
+  })
+
+  return item[0].username
+}
+
 const columns = ref([
   {
     title: '发件人',
@@ -201,7 +220,11 @@ const columns = ref([
     key: 'senderId',
     align: 'center',
     customRender: ({ record }) => {
-      return localStorage.getItem('username')
+      return userList.value.map((item) => {
+        if (item.id == record.senderId) {
+          return item.username
+        }
+      })
     }
   },
   {
@@ -248,7 +271,11 @@ const addresseeColumns = ref([
     key: 'senderId',
     align: 'center',
     customRender: ({ record }) => {
-      return localStorage.getItem('username')
+      return userList.value.map((item) => {
+        if (item.id == record.senderId) {
+          return item.username
+        }
+      })
     }
   },
   {
@@ -287,6 +314,7 @@ const addresseeColumns = ref([
     width: '60%'
   },
   {
+    key: 'operation',
     title: '操作',
     dataIndex: 'operation'
   }
@@ -369,7 +397,7 @@ const onDelete = async (letterId) => {
   justify-content: space-between;
   padding: 0 40px;
   height: 80px;
-  border: 1px solid slateblue;
+  border-bottom: 1px solid slateblue;
   .right {
     display: flex;
     align-items: baseline;
