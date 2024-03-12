@@ -37,6 +37,13 @@
           <div class="text">信件</div>
         </div>
 
+        <div class="item" @click="handleLetter">
+          <div class="icon">
+            <img src="../assets/images/home/上传.png" alt="" />
+          </div>
+          <div class="text">上传资源</div>
+        </div>
+
         <div class="item" @click="handleMenu(5)">
           <div class="icon">
             <img src="../assets/images/home/登录.png" alt="" />
@@ -52,7 +59,7 @@
     title="信件"
     @ok="handleOk"
     @cancel="handleCancel"
-    style="width: 1200px"
+    style="width: 700px"
     cancelText="关闭"
     okText="发送"
   >
@@ -85,6 +92,7 @@
 
       <a-tab-pane key="2" tab="收件箱">
         <a-table
+          :loading="addresseeLoading"
           :pagination="addresseePagination"
           @change="handleAddresseePageParams"
           :dataSource="addresseeDataSource"
@@ -101,9 +109,7 @@
             </template>
 
             <template v-if="column.key === 'operation'">
-              <a-popconfirm title="您确定要拒收吗?" @confirm="onDelete(record.id)">
-                <a-button type="primary">拒收信件</a-button>
-              </a-popconfirm>
+              <a-button type="primary" @click="handleDetail(record, true)">查看内容</a-button>
             </template>
           </template>
         </a-table>
@@ -111,14 +117,39 @@
 
       <a-tab-pane key="3" tab="已发送信件">
         <a-table
+          :loading="sendLoading"
           :pagination="pagination"
           @change="handlePageParams"
           :dataSource="letterDataSource"
           :columns="columns"
           style="width: 100%"
-        />
+        >
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'senderId'">
+              {{ listUsername(record.senderId) }}
+            </template>
+
+            <template v-if="column.key === 'addresseeId'">
+              {{ listUsername(record.addresseeId) }}
+            </template>
+
+            <template v-if="column.key === 'operation'">
+              <a-button type="primary" @click="handleDetail(record, false)">查看内容</a-button>
+            </template>
+          </template>
+        </a-table>
       </a-tab-pane>
     </a-tabs>
+  </a-modal>
+
+  <a-modal v-model:open="openDetail" title="信件内容" style="width: 700px" :footer="null">
+    <div>{{ detail }}</div>
+
+    <div class="btn" style="margin-top: 230px; text-align: center; overflow-y: scroll">
+      <a-popconfirm title="您确定要拒收吗?" @confirm="onDelete">
+        <a-button type="primary" v-if="isDetailModal">拒收信件</a-button>
+      </a-popconfirm>
+    </div>
   </a-modal>
 </template>
 
@@ -131,20 +162,26 @@ import { message } from 'ant-design-vue'
 onMounted(async () => {
   const res = await userAll()
   userList.value = res.data.body.dataList
+
   listAddresseeData()
   listSendLetterData()
 })
 
-// 1
 const router = useRouter()
 const route = useRoute()
 const open = ref(false)
+const openDetail = ref(false)
+const detail = ref() // 信件内容
+const isDetailModal = ref() // 控制显示拒收按钮
+const letterId = ref() // 信件id
 const activeKey = ref('1')
 const pagination = ref({
   pageSize: 10,
   pageNumber: 1,
   total: 0
 })
+const addresseeLoading = ref(false)
+const sendLoading = ref(false)
 
 const addresseePagination = ref({
   pageSize: 10,
@@ -256,11 +293,17 @@ const columns = ref([
     }
   },
 
+  // {
+  //   title: '内容',
+  //   dataIndex: 'content',
+  //   key: 'content',
+  //   width: '60%'
+  // },
   {
-    title: '内容',
-    dataIndex: 'content',
-    key: 'content',
-    width: '60%'
+    key: 'operation',
+    title: '操作',
+    dataIndex: 'operation',
+    align: 'center'
   }
 ])
 
@@ -306,17 +349,11 @@ const addresseeColumns = ref([
             : ''
     }
   },
-
-  {
-    title: '内容',
-    dataIndex: 'content',
-    key: 'content',
-    width: '60%'
-  },
   {
     key: 'operation',
     title: '操作',
-    dataIndex: 'operation'
+    dataIndex: 'operation',
+    align: 'center'
   }
 ])
 const letterDataSource = ref([])
@@ -333,27 +370,44 @@ const handleAddresseePageParams = (page, pageSize) => {
 }
 
 const listSendLetterData = async () => {
+  sendLoading.value = true
   const userId = Number(localStorage.getItem('userId'))
-  const { data } = await listsendLetterAllByUserId({ ...pagination.value, senderId: userId })
+  const { data } = await listsendLetterAllByUserId({
+    ...pagination.value,
+    senderId: userId,
+    audit: 1
+  })
   letterDataSource.value = data.body.dataList
   pagination.value.total = data.body.allTotal
+  sendLoading.value = false
 }
 
 const listAddresseeData = async () => {
+  addresseeLoading.value = true
   const userId = Number(localStorage.getItem('userId'))
   const { data } = await listsendLetterAllByUserId({
     ...addresseePagination.value,
-    addresseeId: userId
+    addresseeId: userId,
+    audit: 1
   })
   addresseeDataSource.value = data.body.dataList
   addresseePagination.value.total = data.body.allTotal
+  addresseeLoading.value = false
 }
 
-const onDelete = async (letterId) => {
-  const res = await deleteLetter({ id: letterId })
+const onDelete = async () => {
+  const res = await deleteLetter({ id: letterId.value })
   console.log(res)
   message.success(res.data.reMsg)
   listAddresseeData()
+  openDetail.value = false
+}
+
+const handleDetail = (record, isDetail) => {
+  letterId.value = record.id
+  isDetailModal.value = isDetail
+  detail.value = record.content
+  openDetail.value = true
 }
 </script>
 
@@ -397,7 +451,7 @@ const onDelete = async (letterId) => {
   justify-content: space-between;
   padding: 0 40px;
   height: 80px;
-  border-bottom: 1px solid slateblue;
+  border-bottom: 1px solid #8697df;
   .right {
     display: flex;
     align-items: baseline;
@@ -418,7 +472,7 @@ const onDelete = async (letterId) => {
 
       .text {
         margin-top: 5px;
-        color: slateblue;
+        color: #8697df;
       }
     }
   }

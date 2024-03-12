@@ -539,7 +539,7 @@ const videoBottomList = [
   }
 ]
 const onChange = (current) => {
-  console.log(current)
+  // console.log(current)
 }
 </script>
 

@@ -129,7 +129,8 @@ const disabled = computed(() => {
 
   .left {
     flex: 1;
-    background-color: slateblue;
+    background: url('../assets/images/userinfo/login-bg.jpeg') no-repeat center center;
+    background-size: cover;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -149,7 +150,20 @@ const disabled = computed(() => {
     align-items: center;
     justify-content: center;
     width: 500px;
-    background-color: #fff;
+    background-color: #be9feb;
   }
+}
+
+:deep(:where(.ant-form-item .ant-form-item-label > label)) {
+  color: unset !important;
+}
+:deep(.ant-form-row) {
+  color: #fff !important;
+  font-weight: bold;
+}
+
+:deep(.login-form-button) {
+  color: #fff;
+  font-weight: bold;
 }
 </style>

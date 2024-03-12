@@ -48,6 +48,7 @@
       </div> -->
       <div class="bottom">
         <a-table
+          :loading="moodListLoading"
           :dataSource="dataSource"
           :columns="columns"
           :pagination="pagination"
@@ -77,6 +78,7 @@ const pagination = ref({
 
 const moodOption = ref()
 const description = ref()
+const moodListLoading = ref(false)
 
 const focus = () => {
   console.log('focus')
@@ -151,6 +153,7 @@ const columns = ref([
 ])
 
 const listMoodData = async () => {
+  moodListLoading.value = true
   const userId = localStorage.getItem('userId')
   const body = {
     ...pagination.value,
@@ -163,6 +166,8 @@ const listMoodData = async () => {
   } else {
     message.error('心情记录列表获取失败')
   }
+
+  moodListLoading.value = false
 }
 
 const addMoodData = async () => {
@@ -203,11 +208,11 @@ const handlePageParams = (page, pageSize) => {
         .hello {
           font-size: 30px;
           font-weight: bold;
-          color: slateblue;
+          color: #8697df;
         }
 
         .title {
-          color: slateblue;
+          color: #8697df;
         }
       }
     }
@@ -224,7 +229,7 @@ const handlePageParams = (page, pageSize) => {
       display: flex;
       align-items: center;
       .name {
-        color: slateblue;
+        color: #8697df;
         font-weight: bold;
       }
     }

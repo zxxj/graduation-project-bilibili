@@ -64,6 +64,7 @@
         </a-tab-pane>
         <a-tab-pane key="3" tab="历史记录">
           <a-table
+            :loading="loading"
             :dataSource="dataSource"
             :columns="columns"
             :pagination="pagination"
@@ -91,6 +92,8 @@ const pagination = ref({
   total: 0
 })
 
+const loading = ref(false)
+
 const formState = ref({
   content1: '',
   content2: '',
@@ -106,20 +109,7 @@ const onFinishFailed = (errorInfo) => {
 }
 
 const activeKey = ref('1')
-const dataSource = ref([
-  {
-    key: '1',
-    status: '狂喜',
-    desc: '哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈,我在狂喜,哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈,我在狂喜',
-    time: '2024-03-05 08:30'
-  },
-  {
-    key: '2',
-    status: '开心',
-    desc: '你看我像开心吗?你看我像开心吗?你看我像开心吗?你看我像开心吗?你看我像开心吗?你看我像开心吗?你看我像开心吗?',
-    time: '2024-03-04 07:30'
-  }
-])
+const dataSource = ref([])
 
 const columns = ref([
   {
@@ -150,6 +140,7 @@ const columns = ref([
 ])
 
 const listSelfData = async () => {
+  loading.value = true
   const userId = localStorage.getItem('userId')
   const body = {
     ...pagination.value,
@@ -162,6 +153,8 @@ const listSelfData = async () => {
   } else {
     message.error('自我探知列表获取失败')
   }
+
+  loading.value = false
 }
 
 const resetClick = () => {
