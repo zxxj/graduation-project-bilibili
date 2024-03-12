@@ -23,6 +23,10 @@ export default defineConfig({
       '/correspondence': {
         target: 'http://182.92.3.1:15555',
         changeOrigin: true
+      },
+      '/community-resources': {
+        target: 'http://182.92.3.1:15555',
+        changeOrigin: true
       }
     }
   },

@@ -64,3 +64,13 @@ export const listAddresseeListByUserId = (data) => {
 export const deleteLetter = (data) => {
   return http.post('/correspondence/delete', data)
 }
+
+// 上传资源
+export const addResource = (data) => {
+  return http.post('/community-resources/add', data)
+}
+
+// 分页查询已上传资源
+export const listResource = (data) => {
+  return http.post('/community-resources/list', data)
+}

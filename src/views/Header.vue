@@ -37,7 +37,7 @@
           <div class="text">信件</div>
         </div>
 
-        <div class="item" @click="handleLetter">
+        <div class="item" @click="handleAssets">
           <div class="icon">
             <img src="../assets/images/home/上传.png" alt="" />
           </div>
@@ -142,7 +142,7 @@
     </a-tabs>
   </a-modal>
 
-  <a-modal v-model:open="openDetail" title="信件内容" style="width: 700px" :footer="null">
+  <a-modal v-model:open="openDetail" :title="detailModalTitle" style="width: 700px" :footer="null">
     <div>{{ detail }}</div>
 
     <div class="btn" style="margin-top: 230px; text-align: center; overflow-y: scroll">
@@ -151,12 +151,64 @@
       </a-popconfirm>
     </div>
   </a-modal>
+
+  <a-modal
+    v-model:open="openAssets"
+    style="width: 700px"
+    @ok="handleAssetsOk"
+    @cancel="handleAssetsCancel"
+  >
+    <a-tabs v-model:activeKey="assetsActiveKey" @change="assetsTabsChange">
+      <a-tab-pane key="1" tab="上传资源">
+        <a-card :bordered="false">
+          <a-form ref="assetsFormRef" :model="assetsForm" :label-col="{ style: { width: '80px' } }">
+            <a-form-item
+              label="资源内容"
+              name="content"
+              :rules="[{ required: true, message: '请输入资源内容!' }]"
+            >
+              <a-textarea v-model:value="assetsForm.content"></a-textarea>
+            </a-form-item>
+          </a-form>
+        </a-card>
+      </a-tab-pane>
+
+      <a-tab-pane key="2" tab="已上传资源">
+        <a-table
+          :pagination="assetsPagination"
+          @change="handleAssetsPageParams"
+          :dataSource="assetsDatasource"
+          :columns="assetsColumns"
+          style="width: 100%"
+        >
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'publisherId'">
+              {{ listUsername(record.publisherId) }}
+            </template>
+
+            <template v-if="column.key === 'operation'">
+              <a-button type="primary" @click="handleDetail(record, false)">查看内容</a-button>
+            </template>
+          </template>
+        </a-table>
+      </a-tab-pane>
+
+      <!-- <a-tab-pane key="3" tab="全部资源"> </a-tab-pane> -->
+    </a-tabs>
+  </a-modal>
 </template>
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import { deleteLetter, listsendLetterAllByUserId, sendLetter, userAll } from '@/http/user'
+import {
+  addResource,
+  deleteLetter,
+  listResource,
+  listsendLetterAllByUserId,
+  sendLetter,
+  userAll
+} from '@/http/user'
 import { message } from 'ant-design-vue'
 
 onMounted(async () => {
@@ -167,6 +219,7 @@ onMounted(async () => {
   listSendLetterData()
 })
 
+const detailModalTitle = ref('信件内容')
 const router = useRouter()
 const route = useRoute()
 const open = ref(false)
@@ -174,7 +227,12 @@ const openDetail = ref(false)
 const detail = ref() // 信件内容
 const isDetailModal = ref() // 控制显示拒收按钮
 const letterId = ref() // 信件id
+const openAssets = ref(false)
 const activeKey = ref('1')
+const assetsForm = ref({})
+const assetsFormRef = ref()
+const assetsActiveKey = ref('1')
+const assetsDatasource = ref([])
 const pagination = ref({
   pageSize: 10,
   pageNumber: 1,
@@ -184,6 +242,12 @@ const addresseeLoading = ref(false)
 const sendLoading = ref(false)
 
 const addresseePagination = ref({
+  pageSize: 10,
+  pageNumber: 1,
+  total: 0
+})
+
+const assetsPagination = ref({
   pageSize: 10,
   pageNumber: 1,
   total: 0
@@ -356,6 +420,49 @@ const addresseeColumns = ref([
     align: 'center'
   }
 ])
+
+const assetsColumns = ref([
+  {
+    title: '发布人',
+    dataIndex: 'publisherId',
+    key: 'publisherId',
+    align: 'center',
+    customRender: ({ record }) => {
+      return userList.value.map((item) => {
+        if (item.id == record.publisherId) {
+          return item.username
+        }
+      })
+    }
+  },
+  {
+    title: '资源内容',
+    dataIndex: 'content',
+    key: 'content',
+    align: 'center'
+  },
+  {
+    title: '审核状态',
+    dataIndex: 'audit',
+    key: 'audit',
+    align: 'center',
+    customRender: ({ record }) => {
+      return record.audit == 1
+        ? '审核通过'
+        : record.audit == 2
+          ? '待审核'
+          : record.audit === 0
+            ? '未通过'
+            : ''
+    }
+  },
+  {
+    key: 'operation',
+    title: '操作',
+    dataIndex: 'operation',
+    align: 'center'
+  }
+])
 const letterDataSource = ref([])
 const addresseeDataSource = ref([])
 
@@ -404,10 +511,67 @@ const onDelete = async () => {
 }
 
 const handleDetail = (record, isDetail) => {
-  letterId.value = record.id
-  isDetailModal.value = isDetail
-  detail.value = record.content
+  if (record.publisherId) {
+    detailModalTitle.value = '资源内容'
+    isDetailModal.value = isDetail
+    detail.value = record.content
+  } else {
+    letterId.value = record.id
+    isDetailModal.value = isDetail
+    detail.value = record.content
+  }
   openDetail.value = true
+}
+
+// 资源
+
+const assetsTabsChange = (key) => {
+  if (key == 2) {
+    listResourceData(1)
+  } else if (key == 3) {
+    listResourceData(0)
+  }
+}
+
+const listResourceData = async (audit = 0) => {
+  const res = await listResource({
+    ...assetsPagination.value,
+    audit: audit,
+    publisherId: Number(localStorage.getItem('userId'))
+  })
+
+  if (res && res.data.body.dataList) {
+    assetsDatasource.value = res.data.body.dataList
+  }
+}
+
+const handleAssetsPageParams = (page, pageSize) => {
+  assetsPagination.value.pageNumber = page.current
+  listResourceData(1)
+}
+
+const handleAssets = () => {
+  openAssets.value = true
+}
+
+const handleAssetsOk = async () => {
+  assetsFormRef.value
+    .validate()
+    .then(async () => {
+      assetsForm.value.publisherId = Number(localStorage.getItem('userId'))
+      const res = await addResource(assetsForm.value)
+      message.success(res.data.reMsg)
+      assetsForm.value = {}
+      openAssets.value = false
+    })
+    .catch((error) => {
+      message.success(error.data.reMsg)
+    })
+}
+
+const handleAssetsCancel = () => {
+  assetsForm.value = {}
+  openAssets.value = false
 }
 </script>
 
