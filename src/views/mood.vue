@@ -2,7 +2,7 @@
   <div class="mood-container">
     <Header />
     <div class="content banner">
-      <a-tabs v-model:activeKey="activeKey" @change="handleTabsChange">
+      <a-tabs v-model:activeKey="activeKey" @change="handleTabsChange" destroyInactiveTabPane>
         <a-tab-pane key="1" tab="选择心情">
           <div class="top">
             <div class="left">
