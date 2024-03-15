@@ -106,6 +106,7 @@ const handleChange = (value) => {
   console.log(`selected ${value}`)
 }
 
+// 1
 const handleClick = async () => {
   switch (Number(moodOption.value)) {
     case 1:
