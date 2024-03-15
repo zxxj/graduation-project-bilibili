@@ -43,6 +43,12 @@
           </div>
           <div class="text">上传资源</div>
         </div>
+        <a href="#" class="item">
+          <div class="icon">
+            <img src="../assets/images/home/消息对话.png" alt="" />
+          </div>
+          <div class="text">对话</div>
+        </a>
 
         <div class="item" @click="handleMenu(5)">
           <div class="icon">
@@ -61,6 +67,7 @@
     @cancel="handleCancel"
     style="width: 700px"
     cancelText="关闭"
+    :zIndex="1"
     okText="发送"
   >
     <a-tabs v-model:activeKey="activeKey">
@@ -142,7 +149,13 @@
     </a-tabs>
   </a-modal>
 
-  <a-modal v-model:open="openDetail" :title="detailModalTitle" style="width: 700px" :footer="null">
+  <a-modal
+    v-model:open="openDetail"
+    :title="detailModalTitle"
+    style="width: 700px"
+    :footer="null"
+    :zIndex="10"
+  >
     <div>{{ detail }}</div>
 
     <div class="btn" style="margin-top: 230px; text-align: center; overflow-y: scroll">
@@ -153,10 +166,11 @@
   </a-modal>
 
   <a-modal
+    :zIndex="1"
     v-model:open="openAssets"
     style="width: 700px"
-    @ok="handleAssetsOk"
     @cancel="handleAssetsCancel"
+    :footer="null"
   >
     <a-tabs v-model:activeKey="assetsActiveKey" @change="assetsTabsChange">
       <a-tab-pane key="1" tab="上传资源">
@@ -195,12 +209,21 @@
 
       <!-- <a-tab-pane key="3" tab="全部资源"> </a-tab-pane> -->
     </a-tabs>
+
+    <div
+      v-if="assetsActiveKey != 2"
+      style="display: flex; justify-content: center; align-items: center; margin-top: 20px"
+    >
+      <a-button type="primary" :icon="h(CloudUploadOutlined)" @click="handleAssetsOk"
+        >上传资源</a-button
+      >
+    </div>
   </a-modal>
 </template>
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, h } from 'vue'
 import {
   addResource,
   deleteLetter,
@@ -210,6 +233,7 @@ import {
   userAll
 } from '@/http/user'
 import { message } from 'ant-design-vue'
+import { CloudUploadOutlined } from '@ant-design/icons-vue'
 
 onMounted(async () => {
   const res = await userAll()
@@ -640,5 +664,9 @@ const handleAssetsCancel = () => {
       }
     }
   }
+}
+
+a {
+  text-decoration: none;
 }
 </style>
