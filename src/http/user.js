@@ -74,3 +74,8 @@ export const addResource = (data) => {
 export const listResource = (data) => {
   return http.post('/community-resources/list', data)
 }
+
+// 删除心情记录
+export const deleteMoodById = (id) => {
+  return http.post('/mood-records/delete', id)
+}

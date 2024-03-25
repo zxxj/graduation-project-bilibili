@@ -58,6 +58,18 @@
               :pagination="pagination"
               @change="handlePageParams"
             >
+              <template #bodyCell="{ column, record }">
+                <template v-if="column.key === 'operation'">
+                  <a-popconfirm
+                    title="确定要删除吗？"
+                    ok-text="确定"
+                    cancel-text="取消"
+                    @confirm="confirm(record)"
+                  >
+                    <a-button>删除</a-button>
+                  </a-popconfirm>
+                </template>
+              </template>
             </a-table>
           </div>
         </a-tab-pane>
@@ -75,9 +87,10 @@
 <script setup>
 import Header from './Header.vue'
 import { ref, onMounted, nextTick } from 'vue'
-import { listMood, addMood } from '../http/user'
+import { listMood, addMood, deleteMoodById } from '../http/user'
 import { message } from 'ant-design-vue'
 import * as echarts from 'echarts'
+import dayjs from 'dayjs'
 
 onMounted(async () => {
   listMoodData()
@@ -162,15 +175,34 @@ const columns = ref([
     title: '心情描述',
     dataIndex: 'description',
     key: 'description',
-    width: '70%'
+    width: '40%'
+  },
+  {
+    title: '记录时间',
+    dataIndex: 'gmtCreate',
+    key: 'gmtCreate',
+    customRender: (record) => {
+      return dayjs(record.text).format('YYYY-MM-DD HH:mm:ss')
+    }
+  },
+  {
+    key: 'operation',
+    title: '操作',
+    dataIndex: 'operation',
+    align: 'center'
   }
-  // {
-  //   title: '记录时间',
-  //   dataIndex: 'time',
-  //   key: 'time'
-  // }
 ])
 
+const confirm = async (record) => {
+  const res = await deleteMoodById({ id: record.id })
+
+  if (res.data.reCode == '200') {
+    listMoodData()
+    message.success(res.data.reMsg)
+  } else {
+    message.error(res.data.reMsg)
+  }
+}
 const listMoodData = async () => {
   moodListLoading.value = true
   const userId = localStorage.getItem('userId')
